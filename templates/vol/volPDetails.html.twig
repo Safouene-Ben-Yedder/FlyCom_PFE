@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+<style type="text/css">
+	table { 
+		width: 100%; 
+		color: #717375; 
+		font-family: helvetica; 
+		line-height: 5mm; 
+		border-collapse: collapse; 
+	}
+	
+	
+	p { margin: 5px; color: #696969; }
+	.border th { 
+		border: 1px solid #000;  
+		color: white; 
+		background: #000; 
+		padding: 10px; 
+		font-weight: normal; 
+		font-size: 14px; 
+		text-align: center; 
+	}
+	.border td { 
+		border: 1px solid #CFD1D2; 
+		padding: 10px 15px; 
+		text-align: center; 
+	}
+	.no-border { 
+		border-right: 1px solid #CFD1D2; 
+		border-left: none; 
+		border-top: none; 
+		border-bottom: none;
+	}
+	.p-10 { width: 10%; } .p-15 { width: 15%; } 
+	.p-33 { width: 33%; } .p-45 { width: 45%; }
+    .r{
+       color: darkblue	; 
+		padding: 10px; 
+		font-weight: normal; 
+		font-size: 18px; 
+    }
+</style>
+   
+     
+</head>
+<body>
+
+
+<h1 align="center">Vol numéro {{ vol.getNumVol }}</h1>
+<h3>Aéroport départ : </h3><p>{{ vol.getAeroportdepart.getNomAeroport }}</p>
+
+<h3>Aéroport d'escales : </h3>
+
+{% if vol.getTves is null %}
+    <p> Il n'ya pas de vols d'escales </p>
+{% else %}
+
+    {% for aeroport in vol.getAeroportsEscales %}
+        <p>{{aeroport.getNomAeroport}}</p>
+    {% endfor %}
+   
+{% endif %}
+
+
+<h3>Aéroport Arrivée : </h3><p>{{ vol.getAeroportdepart.getNomAeroport }}</p>
+<h3>Date de départ : </h3><p>{{ vol.getDateDepart | date('d/m/y à H:i')}}</p>
+<h3>Date d'arrivée : </h3><p>{{ vol.getDateArrivee | date('d/m/y à H:i')}}</p>
+<h3>Code d'avion : </h3><p>{{ vol.getAvion.getCodeAvion }}</p>
+<h3>Planification des tâches</h3>
+        
+            <table align="center" border="2" >  
+            <thead>
+                <tr>
+                <td>Nom et prénom</td>
+                <td>Cin</td>
+                <td>Tâche</td>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for tve in vol.getTves %}
+                    <tr>
+    
+                        <td>{{tve.getEmploye.getNomEmploye}}</td>
+                        <td>{{tve.getEmploye.getCin}}</td>
+                        <td>{{tve.getTache.getDescription}}</td>            
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+            </table> 
+
+
+
+{% if vol.getIntervention is not null %}
+    
+<h3>Intervention :</h3><p>{{vol.getIntervention.getDescription}}</p>    
+   
+{% endif %}
+
+{% if vol.getRetard %}
+ <p class="r">Vol terminé avec retard</p>
+{% else %}
+    <p class="r">Vol terminé sans retard</p>
+{% endif %} 
+
+  </body>

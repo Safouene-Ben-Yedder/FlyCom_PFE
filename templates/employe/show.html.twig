@@ -1,0 +1,401 @@
+{% extends 'base.html.twig' %}
+ 
+  {% block javascripts %}
+       <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+        <script type='text/javascript' src='http://code.jquery.com/jquery.min.js'></script>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+   
+   <script language = "javascript">  
+      $(document).ready(function(){   
+        var id={{ app.user.id }}
+            $.ajax({  
+               url:        '/employe/vols_en_cours/'+ id ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+                  
+                 
+                  for(i = 0; i < data.length; i++) {  
+                     employe = data[i];  
+                     var e = $('<tr><td id = "num_vol"></td>'+
+                     '<td id = "aeroport_depart"></td>'+
+                     '<td id = "aeroport_arrivee"></td>'+
+                     '<td id = "date_arrivee"></td>'+
+                     '<td id = "date_depart"></td>'+
+                     '<td id = "tache"></td>'+
+                     '<td id = "date_debut_tache"></td>'+
+                     '<td id = "date_fin_tache"></td>');
+                    // '<td><button  id="bouttonCommencer" class="btn btn-large btn-primary"></button></td>'+
+                     //'<td><button  id="bouttonTerminer"class="btn btn-large btn-primary"></button></td></tr>');
+                     
+                     $('#num_vol', e).html(employe['num_vol']);  
+                     $('#aeroport_depart', e).html(employe['aeroport_depart']);  
+                     $('#aeroport_arrivee', e).html(employe['aeroport_arrivee']);  
+                     $('#date_arrivee', e).html(employe['date_arrivee']);  
+                     $('#date_depart', e).html(employe['date_depart']);  
+                     $('#tache', e).html(employe['tache']);  
+
+                     if(employe['date_debut_tache'] == null ){
+                        $('#date_debut_tache', e).html("La tâche n'est pas encore commencée");  
+                     }
+                     else{
+                        $('#date_debut_tache', e).html(employe['date_debut_tache']);  
+                     }
+                          
+                     $('#date_fin_tache', e).html("La tâche n'est pas encore terminée"); 
+
+
+                     
+                     var idemp=parseInt(employe['id_emp']);
+                     var idtve=parseInt(employe['id_tve']);
+
+                     var chaine1='<td><button style="align="center";" id="bouttonCommencer" class="btn btn-theme" onclick="fonction_commencer(idemp,idtve)" >Commencer la tâche</button><br>'+
+                     '<br><button style="align="center";" id="bouttonTerminer" class="btn btn-theme04" onclick="fonction_terminer(idemp,idtve)" >Terminer la tâche</button></td>';
+                     chaine1=chaine1.replace("idemp",idemp);
+                     chaine1=chaine1.replace("idtve",idtve);
+                     chaine1=chaine1.replace("idemp",idemp);
+                     chaine1=chaine1.replace("idtve",idtve);
+
+                     
+                    
+
+                    
+                    // var url1='{{ path('inserer_date_debut_tache', {'id': 'employe_id' , 'idtve': 'tve_id'  }) }}';
+                    //     url1= url1.replace("employe_id", idemp);
+                      //   url1= url1.replace("tve_id", idtve);
+                    // var url2='<a href='+ url1 +'>Commencer la tâche</a>';
+
+                     // var url3='{{ path('inserer_date_fin_tache', {'id': 'employe_id' , 'idtve': 'tve_id'  }) }}';
+                        // url3= url3.replace("employe_id", idemp);
+                        // url3= url3.replace("tve_id", idtve);
+                     // var url4='<a href='+ url3 +'>Terminer la tâche</a>';
+
+                     
+                    // $('#bouttonCommencer', e).html(url2);
+                   //  $('#bouttonTerminer', e).html(url4);   
+                    // e.append(' <td><button  id="c"  onclick=disparaitre_boutton(1) >ggv</button></td>');
+                  //   $('#c').attr(onclick,disparaitre_boutton(1));   
+                      e.append(chaine1);
+                     
+                    if(employe['reclamation'] == null ){
+                     var chaine3='<br><br><td><button id="bouttonAjouterReclamation" class="btn btn-round btn-success" onclick="ajouter_reclamation(idemp,idtve)" ><i class="fa fa-envelope-o"> Envoyer</button></td></tr>';
+                     chaine3=chaine3.replace("idemp",idemp);
+                     chaine3=chaine3.replace("idtve",idtve);
+                       e.append(chaine3);  
+                    }else{
+                     var chaine3='<td>rec<br><button id="bouttonAjouterReclamation" class="btn btn-round btn-success" onclick="modifier_reclamation(idemp,idtve)" ><i class="fa fa-pencil"></i> Modifier</button></td></tr>';
+                      chaine3=chaine3.replace("rec",employe['reclamation']);
+                      chaine3=chaine3.replace("idemp",idemp);
+                      chaine3=chaine3.replace("idtve",idtve);
+                       e.append(chaine3);  
+                    }   
+
+
+
+                      if(employe['date_debut_tache'] == null ){
+                        $('#bouttonTerminer', e).prop('disabled', true);
+                     }
+                     else{                
+                        $('#bouttonCommencer', e).prop('disabled', true);
+                     
+                     }
+
+
+
+                     $('#employeShow').append(e); 
+
+                  }  
+
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+        
+      });  
+
+  //$(function()
+//{
+ // $('#b').on('click',function()
+  //{
+    //  $(this).prop('disabled', true);
+
+    
+ // });
+  
+//});
+
+//var disparaitre_boutton = function(a) {
+  // $('#c').prop('disabled', true);
+  // $('#c').html(a);
+   
+//};
+
+var fonction_commencer = function(idemp,idtve) {
+  
+    swal({
+  title: "Commencer la tâche",
+  text: "Etes-vous sûr de commencer la tâche?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willStart) => {
+  if (willStart) {
+      var ch='/employe/inserer_date_debut_tache/'+ idemp +'/'+ idtve ;
+        window.location.replace(ch);
+                          swal("La tâche est commencée", {
+                           icon: "success",
+                            });
+
+  } else {
+    swal("La tâche n'est pas encore commencée");
+  }
+});
+
+
+
+    
+};
+
+
+
+
+var fonction_terminer = function(idemp,idtve) {
+  
+    swal({
+  title: "Terminer la tâcher",
+  text: "Etes-vous sûr de terminer la tâche?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willStart) => {
+  if (willStart) {
+      var ch='/employe/inserer_date_fin_tache/'+ idemp +'/'+ idtve ;
+        window.location.replace(ch);
+                          swal("La tâche est terminée", {
+                           icon: "success",
+                            });
+
+  } else {
+    swal("La tâche n'est pas encore terminée");
+  }
+});
+
+    
+};
+
+var ajouter_reclamation= function(idemp,idtve) {
+
+        swal("Ecrire la réclamation:", {
+        content: "input",
+        inputPlaceholder: "votre réclamation",
+        })
+        .then((value) => {
+
+           $.ajax({  
+               url:        '/vol/ajouter_reclamation/' +idemp + '/' +idtve ,  
+               type:       'POST',   
+               data:{ reclamation : value },
+               dataType: 'json',
+               success: function(data, status) {  
+
+                   var ch='/employe/vols_en_cours/'+ idemp  ;
+                            window.location.replace(ch);
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+
+
+        });    
+
+
+ };   
+
+
+ var modifier_reclamation= function(idemp,idtve) {
+
+        swal("Ecrire la nouvelle réclamation:", {
+        content: "input",
+        inputPlaceholder: "votre nouvelle réclamation",
+        })
+        .then((value) => {
+
+           $.ajax({  
+               url:        '/vol/modifier_reclamation/' +idemp + '/' +idtve ,  
+               type:       'POST',   
+               data:{ reclamation : value },
+               dataType: 'json',
+               success: function(data, status) {  
+
+                   var ch='/employe/vols_en_cours/'+ idemp  ;
+                            window.location.replace(ch);
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+
+
+        });    
+
+
+ };   
+
+
+ var exporter= function(id) {
+
+       
+           $.ajax({  
+               url:        '/employe/telecharger_pdf/' +id ,  
+               type:       'GET', 
+               dataType:   'json',   
+               success: function(data, status) {  
+                 
+                   
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+ };   
+
+
+
+
+
+
+      
+
+     $(document).ready(function(){
+
+  // Search all columns
+  $('#txt_searchall').keyup(function(){
+    // Search Text
+    var search = $(this).val();
+
+    // Hide all table tbody rows
+    $('table tbody tr').hide();
+
+    // Count total search result
+    var len = $('table tbody tr:not(.notfound) td:contains("'+search+'")').length;
+
+    if(len > 0){
+      // Searching text in columns and show match row
+      $('table tbody tr:not(.notfound) td:contains("'+search+'")').each(function(){
+        $(this).closest('tr').show();
+      });
+    }else{
+      $('.notfound').show();
+    }
+
+  });
+});
+
+
+
+   </script> 
+              
+                             
+  {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+.f{
+    margin-left:60px ;
+  margin-top:20px ;
+
+}
+
+.ex {
+  margin-left:30px ;
+  margin-top:20px ;
+}
+
+.numeric {
+  font-weight: bold;
+  text-align : center;
+}
+a {
+  text-decoration: none;
+    color: black;
+
+}
+
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+       <h3><i class="fa fa-angle-right"></i>  Tâches à réaliser</h3>
+
+        <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+               <button class="btn btn-theme start ex" onclick="window.location.href='{{ path('telechargement_pdf_taches_AR', {'id':  app.user.id }) }}';" >
+                  <i class="fa fa-download"></i>
+                  <span>Exporter</span>
+               </button>
+
+                <form action="#" class="pull-right" style="margin-left: 15px; padding:15px;" >
+                      <div class="input-app f">
+                        <input type='text' id='txt_searchall' placeholder='Chercher' class="form-control">
+                      </div>
+                </form>
+
+                <br><br><br>
+
+                
+      
+              <section id="unseen">
+            
+                    <table class="table table-bordered table-striped table-condensed" >  
+                    <thead>
+                        <tr>
+                        <td class="numeric">Numéro de vol</td>
+                        <td class="numeric">Aéroport de départ</td>
+                        <td class="numeric">Aéroport d'arrivée</td>
+                        <td class="numeric">date d'arrivée</td>
+                        <td class="numeric">date de départ</td>
+                        <td class="numeric">Tâche</td>
+                        <td class="numeric">Date début tâche</td>
+                        <td class="numeric">Date fin tâche</td>
+                        <td class="numeric">Actions</td>
+                        <td class="numeric">Réclamation</td>
+                        </tr>
+                    </thead>
+                    <tbody id = "employeShow"></tbody>  
+                    </table> 
+
+              </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>        
+          
+          
+
+{% endblock %}
+
+
+         

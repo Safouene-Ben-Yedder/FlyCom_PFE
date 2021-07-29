@@ -1,14 +1,35 @@
 security:
+    access_denied_url: /authentification 
+    encoders:
+        App\Entity\Employe:
+            algorithm: bcrypt
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users_in_memory: { memory: null }
+        in_database:
+            entity:
+                class: App\Entity\Employe
+                property: login
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
-            provider: users_in_memory
+            anonymous: true
+
+            provider: in_database
+
+            form_login:
+                login_path: authentification 
+                check_path: authentification
+                default_target_path: login_success
+                always_use_default_target_path: true
+
+            logout:
+                path: deconnexion
+                target: authentification
+           
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -21,3 +42,11 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/authentification, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/inscription, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/forgotten_password, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/reset_password, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_USER }
+      #  - { path: ^/, role: ROLE_ADMIN }
+       #  - { path: ^/notification, role: ROLE_ADMIN }
+        

@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+ 
+  {% block javascripts %}
+       <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+        <script type='text/javascript' src='http://code.jquery.com/jquery.min.js'></script>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+   
+   <script language = "javascript">  
+      $(document).ready(function(){   
+        var id={{ app.user.id }};
+            $.ajax({  
+               url:        '/employe/vols_passes/'+ id ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+                  
+                 
+                  for(i = 0; i < data.length; i++) {  
+                     employe = data[i];  
+                     var e = $('<tr><td id = "num_vol"></td>'+
+                     '<td id = "aeroport_depart"></td>'+
+                     '<td id = "aeroport_arrivee"></td>'+
+                     '<td id = "date_arrivee"></td>'+
+                     '<td id = "date_depart"></td>'+
+                     '<td id = "tache"></td>'+
+                     '<td id = "date_debut_tache"></td>'+
+                     '<td id = "date_fin_tache"></td>'+
+                     '<td id = "reclamation"></td>');
+                     
+                     $('#num_vol', e).html(employe['num_vol']);  
+                     $('#aeroport_depart', e).html(employe['aeroport_depart']);  
+                     $('#aeroport_arrivee', e).html(employe['aeroport_arrivee']);  
+                     $('#date_arrivee', e).html(employe['date_arrivee']);  
+                     $('#date_depart', e).html(employe['date_depart']);  
+                     $('#tache', e).html(employe['tache']); 
+                     $('#date_debut_tache', e).html(employe['date_debut_tache']);                                
+                     $('#date_fin_tache', e).html(employe['date_fin_tache']);
+
+                     if(employe['reclamation'] == null ){
+                        $('#reclamation', e).html("Il n ya pas de reclamation");  
+                     }
+                     else{
+                        $('#reclamation', e).html(employe['reclamation']);  
+                     }
+                     
+                                       
+                     $('#employeShow').append(e); 
+
+                  }  
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+        
+      });  
+
+      
+
+     $(document).ready(function(){
+
+  // Search all columns
+  $('#txt_searchall').keyup(function(){
+    // Search Text
+    var search = $(this).val();
+
+    // Hide all table tbody rows
+    $('table tbody tr').hide();
+
+    // Count total search result
+    var len = $('table tbody tr:not(.notfound) td:contains("'+search+'")').length;
+
+    if(len > 0){
+      // Searching text in columns and show match row
+      $('table tbody tr:not(.notfound) td:contains("'+search+'")').each(function(){
+        $(this).closest('tr').show();
+      });
+    }else{
+      $('.notfound').show();
+    }
+
+  });
+});
+
+
+
+   </script> 
+              
+                             
+  {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+.f{
+    margin-left:60px ;
+  margin-top:20px ;
+
+}
+
+.ex {
+  margin-left:30px ;
+  margin-top:20px ;
+}
+
+.numeric {
+  font-weight: bold;
+  text-align : center;
+}
+a {
+  text-decoration: none;
+    color: black;
+
+}
+
+#myInput{
+ padding-right : 200px; 
+}
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+        <h3><i class="fa fa-angle-right"></i>Historique des tâches</h3>
+        
+
+              <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+               <button class="btn btn-theme start ex" onclick="window.location.href='{{ path('telechargement_pdf_taches_P', {'id':  app.user.id }) }}';" >
+                  <i class="fa fa-download"></i>
+                  <span>Exporter</span>
+               </button>
+
+                <form action="#" class="pull-right" style="margin-left: 15px; padding:15px;" >
+                      <div class="input-app f">
+                        <input type='text' id='txt_searchall' placeholder='Chercher' class="form-control">
+                      </div>
+                </form>
+
+                <br><br><br>
+
+                
+      
+              <section id="unseen">
+            
+   
+                  <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered" id="printTable" >  
+                  <thead>
+                      <tr>
+                      <td class="numeric">Numéro de vol</td>
+                      <td class="numeric">Aéroport de départ</td>
+                      <td class="numeric">Aéroport d'arrivée</td>
+                      <td class="numeric">date d'arrivée</td>
+                      <td class="numeric">date de départ</td>
+                      <td class="numeric">Tâche</td>
+                      <td class="numeric">Date début tâche</td>
+                      <td class="numeric">Date fin tâche</td>      
+                      <td class="numeric">Reclamation</td>               
+                      </tr>
+                </thead>
+                  <tbody id = "employeShow"></tbody>  
+                  </table>  
+
+               </section>
+              </div>
+            <!-- /content-panel -->
+            </div>
+          <!-- /col-lg-4 -->
+          </div>             
+           
+
+{% endblock %}

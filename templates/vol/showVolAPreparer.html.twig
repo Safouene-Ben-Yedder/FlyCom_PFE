@@ -1,0 +1,596 @@
+{% extends 'baseAdmin.html.twig' %}
+ 
+  {% block javascripts %}
+       <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+     <!-- js placed at the end of the document so the pages load faster -->
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="/lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="/lib/jquery.scrollTo.min.js"></script>
+  <script src="/lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <!--common script for all pages-->
+  <script src="/lib/common-scripts.js"></script>
+  <!--script for this page-->
+  <script type="text/javascript" src="/lib/gritter/js/jquery.gritter.js"></script>
+  <script type="text/javascript" src="/lib/gritter-conf.js"></script>
+
+
+  <!-- Favicons -->
+  <link href="/img/favicon.png" rel="icon">
+  <link href="/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!--external css-->
+  <link href="/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="/stylesheet" type="text/css" href="lib/gritter/css/jquery.gritter.css" />
+  <!-- Custom styles for this template -->
+  <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/style-responsive.css" rel="stylesheet">
+    
+
+
+   
+   <script language = "javascript">  
+      $(document).ready(function(){   
+            $.ajax({  
+               url:        '/vol/vols_a_preparer' ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+            
+        
+                  for(i = 0; i < data.length; i++) {  
+                     vol = data[i];  
+                     var e = $('<tr><td id = "num_vol"></td>'+
+                     '<td id = "aeroport_depart"></td>');
+                     
+                     var idvol=parseInt(vol['id_vol']);
+                 
+                    if(vol['aeroports_escales'] !== 0 ){
+
+                     var chaine1='<td><button id="bouttonEscales" class="btn btn-theme03" onclick="afficher_escales(idvol)" >Aéroports d\'escales</button></td>';
+                     chaine1=chaine1.replace("idvol",idvol);
+                     }else{
+                       var chaine1='<td>Il n y a pas d\'escales durant ce vol</td>'; 
+                     }
+
+                     e.append(chaine1);
+                        
+                     e.append('<td id = "aeroport_arrivee"></td>'+
+                     '<td id = "date_arrivee"></td>'+
+                     '<td id = "date_depart"></td>'+
+                     '<td id = "code_avion"></td>');
+                    
+                    var chaine2='<td><button id="bouttonTaches" class="btn btn-theme03" onclick="afficher_taches(idvol)" ><i class="fa fa-list-alt"></i>   Planification des tâches</button></td>';
+                     chaine2=chaine2.replace("idvol",idvol);
+                     e.append(chaine2);
+
+                    
+
+                     var chaine3='<td><button id="bouttonEditer" class="btn btn-theme03" onclick="location.href=\'/vol/modifier_vol/idvol\'" type="button"><i class="fa fa-edit"></i> Modifier</button>'+
+                                  '<button style="margin-left: 3px;" id="bouttonSupprimer" class="btn btn-theme03" onclick="location.href=\'/admin/vol/supprimer_vol/idvol\'" type="button"><i class="fa fa-trash-o"></i> Supprimer</button>'+
+                                  '<button  style="margin-top: 3px;" id="bouttonExporter" class="btn btn-theme03" onclick="location.href=\'/admin/telecharger_pdf_details_vol_a_p/idvol\'" type="button"><i class="fa fa-download"></i> Exporter</button></td></tr>';
+
+                     chaine3=chaine3.replace("idvol",vol['id_vol']);
+                     chaine3=chaine3.replace("idvol",vol['id_vol']);
+                     chaine3=chaine3.replace("idvol",vol['id_vol']);
+                     e.append(chaine3);
+
+                     
+                     $('#num_vol', e).html(vol['num_vol']);  
+                     $('#aeroport_depart', e).html(vol['aeroport_depart']);  
+                     $('#aeroport_arrivee', e).html(vol['aeroport_arrivee']);  
+                     $('#date_arrivee', e).html(vol['date_arrivee']);  
+                     $('#date_depart', e).html(vol['date_depart']);  
+                     $('#code_avion', e).html(vol['code_avion']);
+                     
+
+                     $('#volShow').append(e); 
+
+                  }  
+
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+        
+      });  
+
+  //$(function()
+//{
+ // $('#b').on('click',function()
+  //{
+    //  $(this).prop('disabled', true);
+
+    
+ // });
+  
+//});
+
+//var disparaitre_boutton = function(a) {
+  // $('#c').prop('disabled', true);
+  // $('#c').html(a);
+   
+//};
+
+
+var afficher_escales= function(idvol) {
+
+    $.ajax({  
+               url:        '/vol/aeroports_escales/' + idvol ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+
+                  $('#myModalLabel').html('Les aéroports d\'escales');
+        
+
+
+                  for(i = 0; i < data.length; i++) {  
+                     aeroport = data[i];  
+                     var e = $('<tr><td id = "nom_aeroport"></td></tr>');
+
+                     
+                     $('#nom_aeroport', e).html(aeroport['nom_aeroport']);                    
+                     $('#tabMod').append(e); 
+                   
+                  }  
+                   $('#myModal').modal('show') ;
+
+                
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+   
+};
+
+
+
+var afficher_taches= function(idvol) {
+  
+     $.ajax({  
+               url:        '/vol/taches/' + idvol ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+
+                 $('#myModalLabel').html('Planlification des tâches');
+        
+                   var ch = $('<tr><td class="numeric">Cin de l\'employe</td>'+
+                               '<td class="numeric">Nom de l\'employe'+
+                               '<td class="numeric">Tâche</td>'+
+                               '<td class="numeric">Réclamation</td>');
+                   $('#tabMod').append(ch); 
+
+                  for(i = 0; i < data.length; i++) {  
+                     tve = data[i];  
+                     var e = $('<tr><td id = "cin_employe"></td>'+
+                              '<td id = "nom_employe" ></td>'+
+                              '<td id = "tache" ></td>'+
+                              '<td id = "reclamation" ></td>');
+                     
+                     $('#cin_employe', e).html(tve['cin_employe']); 
+                     $('#nom_employe', e).html(tve['nom_employe']); 
+                     $('#tache', e).html(tve['tache']); 
+
+                    
+
+                     if(tve['reclamation'] == null ){
+                        $('#reclamation', e).html("Il n y a pas de réclamation");  
+                     }
+                     else{
+                        $('#reclamation', e).html(tve['reclamation']); 
+                        $('#reclamation', e).attr("style", "background-color: mediumturquoise");  
+ 
+                     }
+
+
+                     $('#tabMod').append(e); 
+                   
+                  }  
+                   $('#myModal').modal('show') ;
+
+                
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+   
+
+};
+
+
+var initialiserTabMod= function() {
+  
+   $("#tabMod tr").remove();
+};
+
+$("#myModal").on('hide.bs.modal', function(){
+  $("#tabMod tr").remove();
+});
+
+
+
+var afficher_reclamations_non_traites= function() {
+
+    $.ajax({  
+               url:        '/vol/reclamations_non_traites_vols_a_preparer'  ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+
+                  $('#myModalLabel2').html('Réclamations non traitées');
+        
+                   var ch = $('<tr><td class="numeric">Numéro de vol</td>'+
+                              '<td class="numeric">Tâche</td>'+
+                              '<td class="numeric">Cin de l\'employé</td>'+
+                              '<td class="numeric">Nom de l\'employé</td>'+
+                              '<td class="numeric">Réclamation</td>'+
+                              '<td class="numeric">Date de réclamation</td>'+
+                              '<td class="numeric">Action</td></tr>');
+                   $('#tabMod2').append(ch); 
+
+                  for(i = 0; i < data.length; i++) {  
+                     tve = data[i];  
+                     var e = $('<tr id = "ligne"><td id = "num_vol"></td>'+
+                               '<td id = "tache"></td>'+
+                               '<td id = "cin"></td>'+
+                               '<td id = "nom"></td>'+
+                               '<td id = "reclamation"></td>'+
+                               '<td id = "date_rec"></td>'+
+                               '<td id = "action"></td></tr>');
+
+                        
+
+                        var chaine1='<td><button id="bouttonTraiterRec" class="btn btn-theme" onclick="fonction_traiter_reclamation(idrec)" ><i class="fa fa-check-square"></i>   Traiter</button></td>';
+                            chaine1=chaine1.replace("idrec",tve['id_rec']);
+                
+                        $('#action', e).html(chaine1);  
+                           
+                        
+
+
+
+                     $('#num_vol', e).html(tve['num_vol']);  
+                     $('#tache', e).html(tve['tache']);
+                     $('#cin', e).html(tve['cin']);
+                     $('#nom', e).html(tve['nom_employe']);
+                      $('#reclamation', e).html(tve['reclamation']);
+                       $('#date_rec', e).html(tve['date_rec']);
+
+                      
+
+
+                     $('#tabMod2').append(e); 
+                   
+                  }  
+                   $('#myModal2').modal('show') ;
+
+                
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+   
+};
+
+
+
+var afficher_reclamations_traites= function() {
+
+    $.ajax({  
+               url:        '/vol/reclamations_traites_vols_a_preparer'  ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+
+                  $('#myModalLabel2').html('Réclamations ttaitées');
+        
+                   var ch = $('<tr><td class="numeric">Numéro de vol</td>'+
+                              '<td class="numeric">Tâche</td>'+
+                              '<td class="numeric">Date début tâche</td>'+
+                              '<td class="numeric">Cin de l\'employé</td>'+
+                              '<td class="numeric">Nom de l\'employé</td>'+
+                              '<td class="numeric">Réclamation</td>'+
+                              '<td class="numeric">Date de réclamation</td>');
+                             
+                   $('#tabMod2').append(ch); 
+
+                  for(i = 0; i < data.length; i++) {  
+                     tve = data[i];  
+                     var e = $('<tr id = "ligne"><td id = "num_vol"></td>'+
+                               '<td id = "tache"></td>'+
+                               '<td id = "date_debut_tache"></td>'+
+                               '<td id = "cin"></td>'+
+                               '<td id = "nom"></td>'+
+                               '<td id = "reclamation"></td>'+
+                               '<td id = "date_rec"></td>');
+                               
+                        
+                        
+
+                     $('#num_vol', e).html(tve['num_vol']);  
+                     $('#tache', e).html(tve['tache']);
+                     $('#cin', e).html(tve['cin']);
+                     $('#nom', e).html(tve['nom_employe']);
+                      $('#reclamation', e).html(tve['reclamation']);
+                       $('#date_rec', e).html(tve['date_rec']);
+
+                      
+
+
+                     $('#tabMod2').append(e); 
+                   
+                  }  
+                   $('#myModal2').modal('show') ;
+
+                
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+   
+};
+
+$("#myModal2").on('hide.bs.modal', function(){
+  
+  $("#tabMod2 tr").remove();
+});
+
+
+var fonction_traiter_reclamation = function(idrec) {
+  
+swal({
+  title: "Traiter la réclamation",
+  text: "Etes-vous sûr de traiter cette réclmation?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((traite) => {
+  if (traite) {
+      var ch='/admin/reclamation/traiter_reclamation/'+ idrec + '/2' ;
+        window.location.replace(ch);
+                          swal("La réclamation est traitée", {
+                           icon: "success",
+                            });
+
+  } else {
+    swal("La réclamation n'est pas encore traitée");
+  }
+});
+
+};
+
+
+
+     $(document).ready(function(){
+
+  // Search all columns
+  $('#txt_searchall').keyup(function(){
+    // Search Text
+    var search = $(this).val();
+
+    // Hide all table tbody rows
+    $('table tbody tr').hide();
+
+    // Count total search result
+    var len = $('table tbody tr:not(.notfound) td:contains("'+search+'")').length;
+
+    if(len > 0){
+      // Searching text in columns and show match row
+      $('table tbody tr:not(.notfound) td:contains("'+search+'")').each(function(){
+        $(this).closest('tr').show();
+      });
+    }else{
+      $('.notfound').show();
+    }
+
+  });
+});
+
+
+
+var supprimer_vol= function(idvol){
+
+        swal({
+        title: "Suppression du vol",
+        text: "Voulez-vous vraiment supprimer cet vol ?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((willDelete) => {
+
+           $.ajax({  
+               url:        '/admin/vol/supprimer_vol/' + idvol ,  
+               type:       'POST',   
+               dataType:   'json',  
+               async:      true,  
+               success: function(data, status) {  
+
+                   var ch='/vol/vols_a_preparer';
+                         window.location.replace(ch);
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+
+        });    
+
+
+ };   
+
+
+</script>
+                             
+  {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+.f{
+    margin-left:60px ;
+    margin-top:20px ;
+
+}
+
+.ex {
+  margin-left:20px ;
+  padding :10px;
+  margin-top:20px ;
+}
+
+.numeric {
+  font-weight: bold;
+  text-align : center;
+}
+a {
+  text-decoration: none;
+    color: black;
+
+}
+td{
+  text-align : center;  
+}
+
+#myInput{
+ padding-right : 200px; 
+}
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+        <h3><i class="fa fa-angle-right"></i>  Vols à préparer</h3>
+
+         <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+       
+
+                <a href="{{ path('admin_creation_vol') }}" class="btn btn-success ex"><i class="glyphicon glyphicon-plus"></i>  Créer un nouveau vol</a>
+                <br>
+                 <button id="bouttonReclamations" class="btn btn-theme ex" onclick="afficher_reclamations_non_traites()" ><i class="fa fa-table"></i>  Réclamations non traitées</button>
+                <button id="bouttonReclamations" class="btn btn-theme ex" onclick="afficher_reclamations_traites()" ><i class="fa fa-table"></i>  Réclamations traitées</button>
+              
+                 <form action="#" class="pull-right" style="margin-left: 15px; padding:15px;" >
+                      <div class="input-app f">
+                        <input type='text' id='txt_searchall' placeholder='Chercher' class="form-control">
+                      </div>
+                </form>
+
+                <br><br><br>
+
+               <section id="unseen">  
+              
+
+                   <!--  MODALS -->
+            
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel"></h4>
+                    </div>
+                    <div class="modal-body">
+                     
+                      <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered" id="tabMod" > 
+                      </table>     
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button"  onclick="initialiserTabMod()" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+            <!-- /showback -->  
+
+
+
+            <!-- Modal -->
+                        <div class="modal fade"  id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                          <div class="modal-dialog"  style="width:900px;">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel2"></h4>
+                              </div>
+                              <div class="modal-body">
+                              
+                                <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered" id="tabMod2" > 
+                                </table>     
+
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button"  onclick="initialiserTabMod()" class="btn btn-default" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+             <!-- /showback -->  
+
+
+                  <table class="table table-bordered table-striped table-condensed">  
+                  <thead>
+                      <tr>
+                      <td class="numeric">Numéro de vol</td>
+                      <td class="numeric">Aéroport de départ</td>
+                      <td class="numeric">Aéroports d'escales</td>
+                      <td class="numeric">Aéroport d'arrivée</td>                  
+                      <td class="numeric">Date de départ</td>
+                      <td class="numeric">Date d'arrivée</td>
+                      <td class="numeric">Code avion</td>
+                      <td class="numeric">PLanification des tâches</td>
+                      <td class="numeric">Actions</td>
+                      </tr>
+                </thead>
+                  <tbody id = "volShow"></tbody>  
+                  </table>     
+           
+               </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>              
+                      
+
+{% endblock %}

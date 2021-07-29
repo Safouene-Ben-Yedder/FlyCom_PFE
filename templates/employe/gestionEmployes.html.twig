@@ -1,0 +1,276 @@
+{% extends 'baseAdmin.html.twig' %}
+ 
+  {% block javascripts %}
+       <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+        <script type='text/javascript' src='http://code.jquery.com/jquery.min.js'></script>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+   
+   <script language = "javascript">  
+      $(document).ready(function(){   
+       
+            $.ajax({  
+               url:        '/admin/gestion_employes' ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+                  
+                 
+                  for(i = 0; i < data.length; i++) {  
+                     employe = data[i];  
+                     var e = $('<tr><td id = "cin"></td>'+
+                     '<td id = "date_naissance"></td>'+
+                     '<td id = "nom"></td>');
+                    
+                     // '<td><button  id="bouttonCommencer" class="btn btn-large btn-primary"></button></td>'+
+                     //'<td><button  id="bouttonTerminer"class="btn btn-large btn-primary"></button></td></tr>');
+                     
+                     $('#cin', e).html(employe['cin']);  
+                     $('#date_naissance', e).html(employe['date_de_naissance']);  
+                     $('#nom', e).html(employe['nom']);  
+                    
+
+                     if(employe['active'] == 'oui' ){
+                        
+                        var chaine1='<td><button id="bouttonDesactiver" class="btn btn-theme" onclick="fonction_desactiver(idemp)" ><i class="fa fa-unlock-alt"></i>  Désactiver</button>'+
+                                     '<button style="margin-left: 10px;" class="btn btn-theme" onclick="supprimer_compte(idemp)" ><i class="fa fa fa-trash-o"></i>  Supprimer</button></td>';
+                        chaine1=chaine1.replace("idemp",employe['id_emp']);
+                        chaine1=chaine1.replace("idemp",employe['id_emp']);  
+                         e.append(chaine1);
+
+                     }
+                     else{
+
+                        var chaine2='<td><button id="bouttonActiver" class="btn btn-theme" onclick="fonction_activer(idemp)" ><i class="fa fa-unlock"></i>  Activer</button>'+
+                                     '<button style="margin-left: 10px;" class="btn btn-theme" onclick="supprimer_compte(idemp)" ><i class="fa fa fa-trash-o"></i>  Supprimer</button></td>';
+                        chaine2=chaine2.replace("idemp",employe['id_emp']);  
+                         chaine2=chaine2.replace("idemp",employe['id_emp']);  
+                        e.append(chaine2);
+                     }
+
+                    
+                        
+
+
+                     $('#employeShow').append(e); 
+
+                  }  
+
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+        
+      });  
+
+  
+
+
+var fonction_activer = function(idemp) {
+  
+    swal({
+  title: "Activer Compte",
+  text: "Etes-vous sûr d'activer le compte de cet employé ?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willActivate) => {
+  if (willActivate) {
+      var ch='/admin/activer_compte_ex/'+ idemp  ;
+        window.location.replace(ch);
+                          swal("Le compte est activé", {
+                           icon: "success",
+                            });
+
+  } else {
+    swal("Le compté n'est pas encore activé");
+  }
+});
+
+    
+};
+
+
+var fonction_desactiver = function(idemp) {
+  
+    swal({
+  title: "Désactiver Compte",
+  text: "Etes-vous sûr de désactiver le compte de cet employé ?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDeactivate) => {
+  if (willDeactivate) {
+      var ch='/admin/desactiver_compte_ex/'+ idemp  ;
+        window.location.replace(ch);
+                          swal("Le compte est désactive", {
+                           icon: "success",
+                            });
+
+  } else {
+    swal("Le compté n'est pas encore désactivé");
+  }
+});
+
+    
+};
+
+
+
+var supprimer_compte = function(idemp) {
+  
+    swal({
+  title: "Supression du compte",
+  text: "Etes-vous sûr de supprimer le compte de cet employé ?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+      var ch='/admin/supprimer_compte/'+ idemp  ;
+        window.location.replace(ch);
+                          swal("Le compte est supprimé", {
+                           icon: "success",
+                            });
+
+  } else {
+    swal("Le compté n'est pas encore supprimé");
+  }
+});
+
+    
+};
+
+
+
+      
+
+     $(document).ready(function(){
+
+  // Search all columns
+  $('#txt_searchall').keyup(function(){
+    // Search Text
+    var search = $(this).val();
+
+    // Hide all table tbody rows
+    $('table tbody tr').hide();
+
+    // Count total search result
+    var len = $('table tbody tr:not(.notfound) td:contains("'+search+'")').length;
+
+    if(len > 0){
+      // Searching text in columns and show match row
+      $('table tbody tr:not(.notfound) td:contains("'+search+'")').each(function(){
+        $(this).closest('tr').show();
+      });
+    }else{
+      $('.notfound').show();
+    }
+
+  });
+});
+
+
+ 
+
+     
+
+   </script> 
+              
+                             
+  {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+<style>
+.f{
+    margin-left:60px ;
+    margin-top:20px ;
+
+}
+
+.ex {
+  margin-left:20px ;
+  padding :10px;
+  margin-top:20px ;
+}
+
+.numeric {
+  font-weight: bold;
+  text-align : center;
+}
+a {
+  text-decoration: none;
+    color: black;
+
+}
+td{
+  text-align : center;  
+}
+
+#myInput{
+ padding-right : 200px; 
+}
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+        <h3><i class="fa fa-angle-right"></i>Comptes</h3>
+
+        <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+       
+             <a class="btn btn-theme ex" href="{{ path('telechargement_pdf_list_employes') }}" ><i class="fa fa-download"></i> Exporter</a> 
+            
+              
+              <form action="#" class="pull-right" style="margin-left: 15px; padding:15px;" >
+                      <div class="input-app f">
+                        <input type='text' id='txt_searchall' placeholder='Chercher' class="form-control">
+                      </div>
+                </form>
+
+                <br><br><br>
+
+               <section id="unseen">  
+
+              
+   
+                  <table class="table table-bordered table-striped table-condensed" >  
+                  <thead>
+                      <tr>
+                      <td class="numeric">CIN</td>
+                      <td class="numeric">Date de naissance</td>
+                      <td class="numeric">Nom et prénom</td>
+                      <td class="numeric">Action</td>
+                      </tr>
+                </thead>
+                  <tbody id = "employeShow"></tbody>  
+                  </table> 
+
+                 </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>            
+           
+
+{% endblock %}
+
+
+         

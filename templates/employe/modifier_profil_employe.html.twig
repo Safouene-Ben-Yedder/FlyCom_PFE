@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+ 
+{% block javascripts %}
+<script>
+
+
+
+
+</script>
+                             
+{% endblock %}
+
+{% block body %}
+
+    
+          
+          <div class="col-lg-12 mt">
+            <div class="row content-panel">
+              <div class="panel-heading">
+                <h3 align="center">Modifier le profil</h3>
+              </div>
+              <!-- /panel-heading -->
+
+                    
+                      <div class="col-lg-8 col-lg-offset-2 detailed">
+                        <h4 class="mb">Informations personnelles </h4>
+                        
+                        
+                 {{ form_start(formProfil) }} 
+                  {#  {{ form_errors(form) }} #}
+
+                    {# <div class="form-group">
+                       <label for="">Numéro de vol</label>
+                       {{ form_widget(formVol.num_vol) }} 
+                    <div>  #}
+
+                   {#} <div class="form-group">
+                      {{ form_label(form.content, "Contenu de l'annonce", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                      {{ form_errors(form.content) }}
+                      <div class="col-sm-10">
+                        {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.content) }}
+                      </div>
+                    </div> #}
+
+                    {{ form_row(formProfil.nom_employe) }}
+                    {{ form_row(formProfil.cin) }}
+                    {{ form_row(formProfil.date_de_naissance) }}
+                    {{ form_row(formProfil.email) }}
+                    {{ form_row(formProfil.login) }}
+                  {#  {{ form_row(formProfil.mot_de_passe) }} 
+                    {{ form_row(formProfil.confirm_mdp) }} #}
+
+                    
+
+                    <div class="custom-file">
+                        {{ form_row(formProfil.photo) }}
+
+                        <!-- new stuff below -->
+                        {# {% if formProfil.vars.value.photo is not null %}
+                            <img src="{{ asset('/uploads/'~ app.user.photo) }}" class=""/>
+                        {% endif %} #}
+
+                    </div>
+                   {#  {{ form_row(formProfil.photo) }} #}
+
+                   {# <ul class="tves" data-prototype="{{ form_widget(formVol.tves.vars.prototype)|e('html_attr') }}">
+                       <li></li>
+                    </ul> #}
+                   
+
+
+                   {# {{ form_widget(formVol) }} #}
+
+
+                   {# {{ form_row(formVol.num_vol, {'attr': { 'placeholder': "Numéro de 
+                    vol" }} ) }} #}
+
+                    <a style="margin-left:700px;" class="btn btn-round btn-info" href="{{ path('changer_mot_de_passe', {'id':  app.user.id }) }}" >Changer le mot de passe</a>
+
+                    <br><br>
+
+                    <button style="margin-left:350px;" type="submit" class="btn btn-theme">Enregistrer</button>
+
+                {{ form_end(formProfil) }}    
+
+
+                
+
+
+
+
+                      </div>
+
+
+
+
+
+            </div>
+          </div> 
+       
+   
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+

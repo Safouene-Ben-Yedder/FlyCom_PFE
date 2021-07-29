@@ -1,0 +1,100 @@
+{% extends 'home.html.twig' %}
+
+{% block javascripts %}
+
+<script>
+ $(document).ready(function(){   
+ 
+    if(window.location.href.indexOf("inscri") != -1){
+
+        $('#titreModal').html("Inscription");
+        $('#msgModal').html("Votre Inscription a étè bien enregistrée.");
+        $('#myModal').modal('show') ;
+    
+    }else if(window.location.href.indexOf("emailNV") != -1){
+        $('#titreModal').html("Probléme d'envoi");
+        $('#msgModal').html("Votre email n'est pas valide.");
+        $('#myModal').modal('show') ;
+        
+    }else if(window.location.href.indexOf("erEn") != -1){
+        $('#titreModal').html("Probléme d'envoi");
+        $('#msgModal').html("Il y a eu un probléme lors de l'envoi de l'email , Veuillez réssayer une autre fois. ");
+        $('#myModal').modal('show') ;     
+    }else if(window.location.href.indexOf("emailEnvoye") != -1){
+        $('#titreModal').html("Changement de mot de passe");
+        $('#msgModal').html("Veuillez consulter votre mail pour changer votre mot de passe . ");
+        $('#myModal').modal('show') ;     
+    }else if(window.location.href.indexOf("cptNA") != -1){
+        $('#titreModal').html("Probléme d'accés");
+        $('#msgModal').html("Votre compte n'est pas encore activé");
+        $('#myModal').modal('show') ;  
+    }else if(window.location.href.indexOf("cptDes") != -1){
+        $('#titreModal').html("Probléme d'accés");
+        $('#msgModal').html("Votre compte est désactivé");
+        $('#myModal').modal('show') ;                      
+    }else{
+       if(window.location.href.indexOf("mdpCh") != -1){
+        $('#titreModal').html("Mot de passe changé");
+        $('#msgModal').html("Votre mot de passe est changé avec succés");
+        $('#myModal').modal('show') ;     
+       }
+    }
+
+  }); 
+
+    
+
+</script>   
+
+{% endblock %}
+
+{% block body %}
+
+<div id="login-page">
+    <div class="container">
+      <form class="form-login" action="{{ path('authentification') }}" method="post">
+        <h2 class="form-login-heading">S'authentificer</h2>
+        <div class="login-wrap">
+          <input type="text" class="form-control" placeholder="Non d'utilisateur" name="_username" required autofocus>
+          <br>
+          <input type="password" class="form-control" placeholder="Mot de passe" name="_password" required>
+            <label class="checkbox">
+            <span class="pull-right">
+            <a data-toggle="modal" href="{{ path('app_forgotten_password') }}">Vous avez oublié votre mot de passe?</a>
+            </span>
+            </label>
+          <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> Connecter</button>
+      </form>    
+          <hr>
+          
+          <div class="registration">
+            Vous n'avez pas encore créee votre compte?<br/>
+            <a class="" href="{{ path('inscription') }}">
+              Créer un compte
+              </a>
+          </div>
+        </div>
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="titreModal"></h4>
+              </div>
+              <div class="modal-body">
+                <p id="msgModal"></p>
+              </div>
+              <div class="modal-footer">
+                <button data-dismiss="modal" class="btn btn-default" type="button">Ok</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- modal -->
+      
+    </div>
+  </div>
+
+
+{% endblock %}

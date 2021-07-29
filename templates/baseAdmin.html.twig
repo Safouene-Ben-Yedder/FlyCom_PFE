@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="5000"> 
+
+   <title>FlyCom</title>
+
+  <!-- Favicons -->
+  <link href="C:/Users/imen/Desktop/PFE/v7/public/assets/img/favicon.png" rel="icon">
+  <link href="C:/Users/imen/Desktop/PFE/v7/public/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Bootstrap core CSS -->
+  <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!--external css-->
+  <link href="/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/css/zabuto_calendar.css">
+  <link rel="stylesheet" type="text/css" href="/lib/gritter/css/jquery.gritter.css" />
+  <!-- Custom styles for this template -->
+  <link href="/css/style.css" rel="stylesheet">
+  <link href="/css/style-responsive.css" rel="stylesheet">
+  <script src="/lib/chart-master/Chart.js"></script>
+  <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+        <script type='text/javascript' src='http://code.jquery.com/jquery.min.js'></script>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+  <script>
+function fetchdata(){
+ $.ajax({
+   url:'/notification/notifications_non_vus' ,  
+   type:'GET',   
+   dataType: 'json',  
+  success: function(data){
+    //alert(1);
+
+    if(data.length != 0){
+      $('#nbr_new_notif').html(data.length);
+      $('#show_new_notifications').html("");
+      for(i = 0; i < data.length; i++) 
+      {  
+                     notification = data[i];  
+                     // var e = $();
+                     // '<td><button  id="bouttonCommencer" class="btn btn-large btn-primary"></button></td>'+
+                     //'<td><button  id="bouttonTerminer"class="btn btn-large btn-primary"></button></td></tr>');
+
+                      var chainex='<li><p class="yellow">Vous avez nbr nouvelles notifications</p><br>';
+                      chainex=chainex.replace("nbr",data.length);
+                    
+                       $('#show_new_notifications').append(chainex); 
+
+                     var chaine='<li><span class="label label-warning"><i class="fa fa-bell"></i></span>'+
+                                 ' notif<span class="small italic">date</span></li>';
+                     chaine=chaine.replace("notif",notification['description']);
+                     chaine=chaine.replace("date",notification['date_notification']);
+                     
+                     //$('#notif',e).html(chaine);  
+                     //e.append(chaine);
+                     var e = $(chaine);
+                     $('#show_new_notifications').append(chaine); 
+
+                    var chaine3='#idvol';
+                    chaine3=chaine3.replace("idvol",notification['id_vol']); 
+                    $(chaine3).html("");
+                    $(chaine3).html('<span class="label label-danger pull-right">Vol en retard</span>');
+
+      }
+          
+
+    }else{
+        $('#nbr_new_notif').html("");
+       $('#show_new_notifications').html("");
+    }  
+
+       var url='{{ path('lister_notifications') }}';
+      
+       var chaine2='<li><a href='+url+'>Voir tous les notifications</a></li>';
+
+         $('#show_new_notifications').append(chaine2);  
+
+  },  
+  error : function(xhr, textStatus, errorThrown) {  
+     alert('Ajax request failed.'); 
+  },
+  complete:function(data){
+   setTimeout(fetchdata,6000);
+  }
+ });
+}
+
+$(document).ready(function(){
+ setTimeout(fetchdata,6000);
+});
+
+
+
+$(document).ready(function(){
+  $("#notif_vu").click(function(){
+            
+          $.ajax({  
+               url:        '/notification/mettre_notifications_vus' ,  
+               type:       'POST',   
+               dataType: 'json',
+               success: function(data, status) {  
+                // alert("h");
+                 $('#nbr_new_notif').html("");
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+            
+  });
+});
+
+
+</script>
+
+ 
+
+
+
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+
+
+  <section id="container">
+    <!-- **********************************************************************************************************************************************************
+        TOP BAR CONTENT & NOTIFICATIONS
+        *********************************************************************************************************************************************************** -->
+    <!--header start-->
+    <header class="header black-bg">
+      <div class="sidebar-toggle-box">
+        <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+      </div>
+      <!--logo start-->
+      <a href="index.html" class="logo"><b>FLY<span>Com</span></b></a>
+      <!--logo end-->
+      <div class="nav notify-row" id="top_menu">
+        <!--  notification start -->
+        <ul class="nav top-menu">
+         
+            
+        
+          <!-- notification dropdown start-->
+          <li id="header_notification_bar" class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" id="notif_vu">
+              <i class="fa fa-bell-o"></i>
+              <span class="badge bg-warning" id="nbr_new_notif"></span>
+              </a>
+            <ul class="dropdown-menu extended notification" id="show_new_notifications">
+              <div class="notify-arrow notify-arrow-yellow"></div>
+              {#<li>
+                <p class="yellow">You have 7 new notifications</p>
+              </li>
+              
+              <li>
+                <a href="index.html#">
+                  <span class="label label-warning"><i class="fa fa-bell"></i></span>
+                  Memory #2 Not Responding.
+                  <span class="small italic">30 mins.</span>
+                  </a>
+              </li>
+              
+              <li>
+                <a href="index.html#">See all notifications</a>
+              </li> #}
+            </ul>
+          </li>
+          <!-- notification dropdown end -->
+        </ul>
+        <!--  notification end -->
+      </div>
+      <div class="top-menu">
+        <ul class="nav pull-right top-menu">
+           <li>
+            <a class="logout" href="{{ path('deconnexion') }}">
+             <i class="fa fa-sign-out"></i> 
+              <span> Deconnecter </span>
+            </a>
+          </li>
+      </div>
+    </header>
+    <!--header end-->
+
+
+     <!--sidebar start-->
+    <aside>
+      <div id="sidebar" class="nav-collapse ">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+         <p class="centered">
+          {% if app.user.photo is not null %}
+          <img src="{{ asset('/uploads/'~ app.user.photo) }}" alt=""  class="img-circle" width="80"> 
+          {% endif %}
+          </p>
+          <a  href="{{ path('modifier_profil', {'id': app.user.id }) }}"><h5 class="centered">{{ app.user.nom_employe }}</h5></a>
+          <li class="mt">
+          {% if app.request.attributes.get('_route') == 'statistiques' %}
+            <a class="active" href="{{ path('statistiques') }}">
+          {% else %}
+            <a href="{{ path('statistiques') }}">
+           {% endif %}
+              <i class="fa fa-dashboard"></i>
+              <span>Tableau de bord</span>
+              </a>
+          </li>
+          <li class="mt">
+            {% if app.request.attributes.get('_route') == 'admin_affiche_vols_en_cours' %}
+              <a class="active" href="{{ path('admin_affiche_vols_en_cours') }}">
+            {% else %}
+             <a href="{{ path('admin_affiche_vols_en_cours') }}">
+            {% endif %}
+           
+              <i class="fa fa-plane"></i>
+              <span>Vols en cours de préparation</span>
+              </a>
+          </li>
+          <li class="mt">   
+            {% if app.request.attributes.get('_route') == 'admin_affiche_vols_a_preparer' %}
+              <a class="active" href="{{ path('admin_affiche_vols_a_preparer') }}">
+            {% else %}
+             <a href="{{ path('admin_affiche_vols_a_preparer') }}">
+            {% endif %}
+
+              <i class="fa fa-plane"></i>
+              <span>Vols à préparer</span>
+              </a>
+          </li>
+          <li class="mt">
+
+            {% if app.request.attributes.get('_route') == 'admin_affiche_vols_passes' %}
+              <a class="active" href="{{ path('admin_affiche_vols_passes') }}">
+            {% else %}
+             <a  href="{{ path('admin_affiche_vols_passes') }}">
+            {% endif %}
+            
+              <i class="fa fa-plane"></i>
+              <span>Vols passés</span>
+              </a>
+          </li>
+          <li class="mt">
+           {% if app.request.attributes.get('_route') == 'gestion_comptes' %}
+              <a class="active" href="{{ path('gestion_comptes') }}">
+            {% else %}
+             <a href="{{ path('gestion_comptes') }}">
+            {% endif %}
+            
+              <i class="fa fa-cogs"></i>
+              <span>Gestion des inscriptions</span>
+              </a>
+          </li>
+           <li class="mt">
+           {% if app.request.attributes.get('_route') == 'gestion_employes' %}
+              <a class="active" href="{{ path('gestion_employes') }}">
+            {% else %}
+             <a href="{{ path('gestion_employes') }}">
+            {% endif %}      
+
+              <i class="fa fa-cogs"></i>
+              <span>Gestion des comptes</span>
+              </a>
+          </li>
+          <li class="mt">
+            {% if app.request.attributes.get('_route') == 'lister_aeroports' %}
+                <a class="active" href="{{ path('lister_aeroports') }}">
+            {% else %}
+               <a href="{{ path('lister_aeroports') }}">
+            {% endif %}      
+
+              <i class="fa fa-cogs"></i>
+              <span>Gestion des aeroports</span>
+              </a>
+          </li>
+          <li class="mt">
+            {% if app.request.attributes.get('_route') == 'lister_avions' %}
+                <a class="active" href="{{ path('lister_avions') }}">
+            {% else %}
+              <a href="{{ path('lister_avions') }}">
+            {% endif %}  
+            
+              <i class="fa fa-cogs"></i>
+              <span>Gestion des avions</span>
+              </a>
+          </li>
+                  
+        </ul>
+        <!-- sidebar menu end-->
+      </div>
+      </aside>
+    <!--sidebar end-->
+
+     MAIN CONTENT
+        *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper">
+       {% block body %}{% endblock %}
+        
+      </section>
+    </section>
+    <!--main content end-->
+   
+  </section>
+
+
+       
+        {% block javascripts %}
+        
+        
+        {% endblock %}
+    </body>
+</html>

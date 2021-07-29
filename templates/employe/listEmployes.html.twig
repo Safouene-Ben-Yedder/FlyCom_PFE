@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  
+     
+</head>
+<body>
+
+
+        <h3 align="center">Liste des employés</h3>
+        
+                  <table align="center" border="2" >  
+                  <thead>
+                      <tr>
+                      <td>CIN</td>
+                      <td>Nom et prénom</td>
+                      <td>Date de naissance </td>
+                      <td>Email</td>
+                      </tr>
+                </thead>
+                  <tbody>
+
+                    {% for employe in employes %}
+                        <tr>
+        
+                            <td>{{employe.getCin}}</td>
+                            <td>{{employe.getNomEmploye}}</td>
+                            <td>{{employe.getDateDeNaissance | date('d/m/y')}}</td>
+                            <td>{{employe.getEmail}}</td>
+                      
+                        </tr>
+                      {% endfor %}
+
+                 </tbody>
+                  </table>     
+
+
+
+  </body>

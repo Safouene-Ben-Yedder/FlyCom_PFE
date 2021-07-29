@@ -1,0 +1,483 @@
+{% extends 'baseAdmin.html.twig' %}
+ 
+  {% block javascripts %}
+       <script language = "javascript" 
+      src = "https://code.jquery.com/jquery-2.2.4.min.js"></script> 
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+     <!-- js placed at the end of the document so the pages load faster -->
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
+  <script class="include" type="text/javascript" src="/lib/jquery.dcjqaccordion.2.7.js"></script>
+  <script src="/lib/jquery.scrollTo.min.js"></script>
+  <script src="/lib/jquery.nicescroll.js" type="text/javascript"></script>
+  <!--common script for all pages-->
+  <script src="/lib/common-scripts.js"></script>
+  <!--script for this page-->
+  <script type="text/javascript" src="/lib/gritter/js/jquery.gritter.js"></script>
+  <script type="text/javascript" src="/lib/gritter-conf.js"></script>
+    
+
+
+   
+   <script language = "javascript">  
+      $(document).ready(function(){   
+            $.ajax({  
+               url:        '/vol/vols_passes' ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+            
+        
+                  for(i = 0; i < data.length; i++) {  
+                     vol = data[i];  
+                     var e = $('<tr><td id = "num_vol"></td>'+
+                     '<td id = "aeroport_depart"></td>');
+                     
+                     var idvol=parseInt(vol['id_vol']);
+                 
+                    if(vol['aeroports_escales'] !== 0 ){
+
+                     var chaine1='<td><button id="bouttonEscales" class="btn btn-theme" onclick="afficher_escales(idvol)" >Aéroports d\'escales</button></td>';
+                     chaine1=chaine1.replace("idvol",idvol);
+                     }else{
+                       var chaine1='<td>Il n y a pas d\'escales durant ce vol</td>'; 
+                     }
+
+                     e.append(chaine1);
+                        
+                     e.append('<td id = "aeroport_arrivee"></td>'+
+                     '<td id = "date_arrivee"></td>'+
+                     '<td id = "date_depart"></td>'+
+                     '<td id = "code_avion"></td>');
+                    
+                    var chaine2='<td><button id="bouttonTaches" class="btn btn-theme" onclick="afficher_taches(idvol)" ><i class="fa fa-list-alt"></i>  Planification des tâches</button></td>';
+                     chaine2=chaine2.replace("idvol",idvol);
+                     e.append(chaine2);
+
+                    e.append('<td id="retard" ></td>');
+
+                    if(vol['intervention'] == null ){
+                        var chaine4='<td>Pas d\'intervention<br>'+
+                                 '<button  onclick="ajouter_intervention(idvol)" class="btn btn-theme"><i class="fa fa-plus"></i> Ajouter</button></td></tr>';  
+                        chaine4=chaine4.replace("idvol",idvol);
+                        e.append(chaine4);
+
+                     }
+                     else{
+                        chaine3='<td>inter<br>'+
+                                 '<button onclick="modifier_intervention(idvol)"  class="btn btn-theme" ><i class="fa fa-edit"></i> Modifier</button><br><br>'+
+                                 '<button onclick="supprimer_intervention(idvol)"  class="btn btn-theme"><i class="fa fa-trash"></i> Supprimer</button></td></tr>';
+                        chaine3=chaine3.replace("inter",vol['intervention']);
+                        chaine3=chaine3.replace("idvol",idvol);
+                        chaine3=chaine3.replace("idvol",idvol);
+
+                        e.append(chaine3);  
+                     }                
+
+                     var chaine4=('<button class="btn btn-theme03" onclick="location.href=\'/admin/telecharger_pdf_details_vol_p/idvol\'" type="button"><i class="fa fa-download"></i>Exporter</button></td></tr>');
+                     chaine4=chaine4.replace("idvol",vol['id_vol']);
+                     e.append(chaine4);
+
+                    // var chaine4='<td><button id="bouttonSupprimer" class="btn btn-large btn-primary" onclick="location.href=\'/vol/supprimer_vol/idvol\'" type="button">Supprimer ce vol</button></td></tr>';
+                    // chaine4=chaine4.replace("idvol",vol['id_vol']);
+                    // e.append(chaine4);
+
+                     $('#num_vol', e).html(vol['num_vol']);  
+                     $('#aeroport_depart', e).html(vol['aeroport_depart']);  
+                     $('#aeroport_arrivee', e).html(vol['aeroport_arrivee']);  
+                     $('#date_arrivee', e).html(vol['date_arrivee']);  
+                     $('#date_depart', e).html(vol['date_depart']);  
+                     $('#code_avion', e).html(vol['code_avion']);
+         
+                     if(vol['retard']){
+                        $('#retard', e).html("Il y a un retard");  
+                     }
+                     else{
+                        $('#retard', e).html('Il n y pas de retard');  
+                     }                
+
+                     $('#volShow').append(e); 
+
+                  }  
+
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+        
+      });  
+
+  //$(function()
+//{
+ // $('#b').on('click',function()
+  //{
+    //  $(this).prop('disabled', true);
+
+    
+ // });
+  
+//});
+
+//var disparaitre_boutton = function(a) {
+  // $('#c').prop('disabled', true);
+  // $('#c').html(a);
+   
+//};
+
+
+var afficher_escales= function(idvol) {
+
+    $.ajax({  
+               url:        '/vol/aeroports_escales/' + idvol ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+
+                  $('#myModalLabel').html('Liste des aeroports d\'escales');
+        
+                  
+
+                  for(i = 0; i < data.length; i++) {  
+                     aeroport = data[i];  
+                     var e = $('<tr><td id = "nom_aeroport"></td></tr>');
+
+                     
+                     $('#nom_aeroport', e).html(aeroport['nom_aeroport']);                    
+                     $('#tabMod').append(e); 
+                   
+                  }  
+                   $('#myModal').modal('show') ;
+
+                
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+   
+};
+
+
+
+var afficher_taches= function(idvol) {
+  
+     $.ajax({  
+               url:        '/vol/taches/' + idvol ,  
+               type:       'GET',   
+               dataType:   'json',  
+               async:      true,  
+               
+               success: function(data, status) {  
+
+                 $('#myModalLabel').html('Planification des tâches');
+        
+                   var ch = $('<tr><td class="numeric">Cin de l\'employe</td>'+
+                               '<td class="numeric">Nom de l\'employe'+
+                               '<td class="numeric">Tâche</td>'+
+                               '<td class="numeric">Date de début tâche</td>'+
+                               '<td class="numeric">Date de fin tâche</td></tr>');
+                   $('#tabMod').append(ch); 
+
+                  for(i = 0; i < data.length; i++) {  
+                     tve = data[i];  
+                     var e = $('<tr><td id = "cin_employe"></td>'+
+                              '<td id = "nom_employe" ></td>'+
+                              '<td id = "tache" ></td>'+
+                              '<td id = "date_debut_tache" ></td>'+
+                              '<td id = "date_fin_tache" ></td>');
+                     
+                     $('#cin_employe', e).html(tve['cin_employe']); 
+                     $('#nom_employe', e).html(tve['nom_employe']); 
+                     $('#tache', e).html(tve['tache']); 
+
+                     
+                        $('#date_debut_tache', e).html(tve['date_debut_tache']);  
+                        
+                     
+
+                      
+                        $('#date_fin_tache', e).html(tve['date_fin_tache']);  
+                     
+
+                     $('#tabMod').append(e); 
+                   
+                  }  
+                   $('#myModal').modal('show') ;
+
+                
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });  
+   
+
+};
+
+
+var ajouter_intervention= function(idvol) {
+
+        swal("Ecrire l'intervention:", {
+        content: "input",
+        inputPlaceholder: "votre intervention",
+        })
+        .then((value) => {
+
+           $.ajax({  
+               url:        '/vol/ajouter_intervention/' + idvol ,  
+               type:       'POST',   
+               data:{ inter : value },
+               dataType: 'json',
+               success: function(data, status) {  
+
+                   var ch='/vol/vols_passes';
+                         window.location.replace(ch);
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+
+
+        });    
+
+
+ };   
+
+
+
+
+var modifier_intervention= function(idvol) {
+
+        swal("Ecrire l'intervention:", {
+        content: "input",
+        inputPlaceholder: "votre intervention",
+        })
+        .then((value) => {
+
+           $.ajax({  
+               url:        '/vol/modifier_intervention/' + idvol ,  
+               type:       'POST',   
+               data:{ inter : value },
+               dataType: 'json',
+               success: function(data, status) {  
+
+                   var ch='/vol/vols_passes';
+                         window.location.replace(ch);
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+
+
+        });    
+
+
+ };   
+
+
+
+var supprimer_intervention= function(idvol) {
+
+        swal({
+        title: "Supression de l'intervention",
+        text: "Etes-sûr de supprimer cette intervention? ",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((willDelete) => {
+
+           $.ajax({  
+               url:        '/vol/supprimer_intervention/' + idvol ,  
+               type:       'POST',   
+               dataType:   'json',  
+               async:      true,  
+               success: function(data, status) {  
+
+                   var ch='/vol/vols_passes';
+                         window.location.replace(ch);
+
+               },  
+               error : function(xhr, textStatus, errorThrown) {  
+                  alert('Ajax request failed.');  
+               }  
+            });      
+
+
+        });    
+
+
+ };   
+
+
+
+var initialiserTabMod= function() {
+  
+   $("#tabMod tr").remove();
+};
+
+$("#myModal").on('hide.bs.modal', function(){
+  $("#tabMod tr").remove();
+});
+
+
+
+
+
+     $(document).ready(function(){
+
+  // Search all columns
+  $('#txt_searchall').keyup(function(){
+    // Search Text
+    var search = $(this).val();
+
+    // Hide all table tbody rows
+    $('table tbody tr').hide();
+
+    // Count total search result
+    var len = $('table tbody tr:not(.notfound) td:contains("'+search+'")').length;
+
+    if(len > 0){
+      // Searching text in columns and show match row
+      $('table tbody tr:not(.notfound) td:contains("'+search+'")').each(function(){
+        $(this).closest('tr').show();
+      });
+    }else{
+      $('.notfound').show();
+    }
+
+  });
+});
+
+</script>
+                             
+  {% endblock %}
+
+{% block stylesheets %}
+
+<style>
+.f{
+    margin-left:60px ;
+    margin-top:20px ;
+
+}
+
+.ex {
+  margin-left:20px ;
+  padding :10px;
+  margin-top:20px ;
+}
+
+.numeric {
+  font-weight: bold;
+  text-align : center;
+}
+a {
+  text-decoration: none;
+    color: black;
+
+}
+td{
+  text-align : center;  
+}
+
+#myInput{
+ padding-right : 200px; 
+}
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+        <h3><i class="fa fa-angle-right"></i>  Vols passés</h3>
+      
+
+          <div class="row mt">
+          <div class="col-lg-12">
+            <div class="content-panel">
+
+
+            <form action="#" class="pull-right" style="margin-left: 15px; padding:15px;" >
+                      <div class="input-app f">
+                        <input type='text' id='txt_searchall' placeholder='Chercher' class="form-control">
+                      </div>
+                </form>
+
+                <br><br><br>
+
+                
+      
+              <section id="unseen">  
+
+                   <!--  MODALS -->
+            
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h4 class="modal-title" id="myModalLabel"></h4>
+                    </div>
+                    <div class="modal-body">
+                     
+                      <table cellpadding="0" cellspacing="0" border="1" class="table table-bordered" id="tabMod" > 
+                      </table>     
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button"  onclick="initialiserTabMod()" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+            <!-- /showback -->          
+             
+                  <table class="table table-bordered table-striped table-condensed" >  
+                  <thead>
+                      <tr>
+                      <td class="numeric">Numéro de vol</td>
+                      <td class="numeric">Aéroport de départ</td>
+                      <td class="numeric">Aéroports d'escales</td>
+                      <td class="numeric">Aéroport d'arrivée</td>                  
+                      <td class="numeric">Date de départ</td>
+                      <td class="numeric">Date d'arrivée</td>
+                      <td class="numeric">Code d'avion</td>
+                      <td class="numeric">Planification des tâches</td>
+                      <td class="numeric">Retard</td>
+                      <td class="numeric">Intervention</td>
+                      <td class="numeric">Action</td>
+                      </tr>
+                </thead>
+                  <tbody id = "volShow"></tbody>  
+                  </table> 
+
+                </section>
+            </div>
+            <!-- /content-panel -->
+          </div>
+          <!-- /col-lg-4 -->
+        </div>          
+           
+          
+
+{% endblock %}

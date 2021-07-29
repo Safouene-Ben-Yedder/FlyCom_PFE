@@ -1,4 +1,28 @@
 {
+    "amphp/amp": {
+        "version": "v2.4.4"
+    },
+    "amphp/byte-stream": {
+        "version": "v1.7.3"
+    },
+    "amphp/parallel": {
+        "version": "v1.4.0"
+    },
+    "amphp/parser": {
+        "version": "v1.0.0"
+    },
+    "amphp/process": {
+        "version": "v1.1.0"
+    },
+    "amphp/serialization": {
+        "version": "v1.0.0"
+    },
+    "amphp/sync": {
+        "version": "v1.4.0"
+    },
+    "cboden/ratchet": {
+        "version": "v0.4.2"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -20,6 +44,9 @@
     "doctrine/common": {
         "version": "2.12.0"
     },
+    "doctrine/data-fixtures": {
+        "version": "1.4.2"
+    },
     "doctrine/dbal": {
         "version": "v2.10.1"
     },
@@ -36,6 +63,18 @@
             "./config/packages/prod/doctrine.yaml",
             "./src/Entity/.gitignore",
             "./src/Repository/.gitignore"
+        ]
+    },
+    "doctrine/doctrine-fixtures-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "fc52d86631a6dfd9fdf3381d0b7e3df2069e51b3"
+        },
+        "files": [
+            "./src/DataFixtures/AppFixtures.php"
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
@@ -75,23 +114,35 @@
     "doctrine/reflection": {
         "version": "1.2.1"
     },
-    "easycorp/easy-log-handler": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "70062abc2cd58794d2a90274502f81b55cd9951b"
-        },
-        "files": [
-            "./config/packages/dev/easy_log_handler.yaml"
-        ]
+    "dompdf/dompdf": {
+        "version": "v0.8.5"
     },
     "egulias/email-validator": {
         "version": "2.1.17"
     },
+    "evenement/evenement": {
+        "version": "v3.0.1"
+    },
+    "fzaninotto/faker": {
+        "version": "v1.9.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
+    },
+    "h4cc/wkhtmltopdf-amd64": {
+        "version": "0.12.4"
+    },
+    "h4cc/wkhtmltopdf-i386": {
+        "version": "0.12.4"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
+    },
+    "knplabs/knp-snappy": {
+        "version": "v1.2.1"
+    },
+    "league/csv": {
+        "version": "9.0.0"
     },
     "monolog/monolog": {
         "version": "2.0.2"
@@ -104,6 +155,12 @@
     },
     "ocramius/proxy-manager": {
         "version": "2.2.3"
+    },
+    "phenx/php-font-lib": {
+        "version": "0.5.2"
+    },
+    "phenx/php-svg-lib": {
+        "version": "v0.3.3"
     },
     "php": {
         "version": "7.3"
@@ -126,11 +183,50 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.3"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
+    },
+    "ratchet/rfc6455": {
+        "version": "v0.2.6"
+    },
+    "react/cache": {
+        "version": "v1.0.0"
+    },
+    "react/dns": {
+        "version": "v1.2.0"
+    },
+    "react/event-loop": {
+        "version": "v1.1.1"
+    },
+    "react/promise": {
+        "version": "v2.7.1"
+    },
+    "react/promise-timer": {
+        "version": "v1.5.1"
+    },
+    "react/socket": {
+        "version": "v1.4.0"
+    },
+    "react/stream": {
+        "version": "v1.1.1"
+    },
+    "rubix/ml": {
+        "version": "0.1.0-rc3"
+    },
+    "rubix/tensor": {
+        "version": "2.0.5"
+    },
+    "sabberworm/php-css-parser": {
+        "version": "8.3.0"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",
@@ -143,6 +239,12 @@
         "files": [
             "./config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "spipu/html2pdf": {
+        "version": "v5.2.2"
+    },
+    "swiftmailer/swiftmailer": {
+        "version": "v6.2.3"
     },
     "symfony/asset": {
         "version": "v5.0.7"
@@ -294,6 +396,21 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/mercure": {
+        "version": "v0.3.0"
+    },
+    "symfony/mercure-bundle": {
+        "version": "0.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "0.2",
+            "ref": "a37d3438e4bd4f9f924c516996bc29e25f66b07e"
+        },
+        "files": [
+            "./config/packages/mercure.yaml"
+        ]
+    },
     "symfony/mime": {
         "version": "v5.0.7"
     },
@@ -430,6 +547,20 @@
     "symfony/string": {
         "version": "v5.0.7"
     },
+    "symfony/swiftmailer-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "ae4d22af30bbd484506bc1817c5a3ef72c855b93"
+        },
+        "files": [
+            "./config/packages/dev/swiftmailer.yaml",
+            "./config/packages/swiftmailer.yaml",
+            "./config/packages/test/swiftmailer.yaml"
+        ]
+    },
     "symfony/test-pack": {
         "version": "v1.0.6"
     },
@@ -505,8 +636,20 @@
             "./config/routes/dev/web_profiler.yaml"
         ]
     },
+    "symfony/web-server-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "dae9b39fd6717970be7601101ce5aa960bf53d9a"
+        }
+    },
     "symfony/yaml": {
         "version": "v5.0.7"
+    },
+    "tecnickcom/tcpdf": {
+        "version": "6.3.5"
     },
     "twig/extra-bundle": {
         "version": "v3.0.3"
@@ -516,6 +659,9 @@
     },
     "webmozart/assert": {
         "version": "1.7.0"
+    },
+    "wemersonjanuario/wkhtmltopdf-windows": {
+        "version": "0.12.2.3"
     },
     "zendframework/zend-code": {
         "version": "3.4.1"

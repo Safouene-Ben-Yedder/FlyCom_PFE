@@ -1,0 +1,38 @@
+{% extends 'home.html.twig' %}
+
+{% block javascripts %}
+
+
+{% endblock %}
+
+{% block body %}
+
+
+<div id="login-page">
+    <div class="container">
+      <div class="form-login" action="index.html">
+        <h2 class="form-login-heading">Inscription</h2>
+        <div class="login-wrap">
+
+            {{ form_start(form) }}
+
+            {{form_row(form.nom_employe, {'label':'Nom et prénom','attr': {'placeholder': 'Votre nom et votre Prénom' } }) }}
+            {{form_row(form.cin, {'label':'CIN','attr': {'placeholder': 'Votre cin' } } ) }}
+            {{form_row(form.date_de_naissance, {'label':'Date de naissance'}) }}
+            {{form_row(form.email, {'label':'Email','attr': {'placeholder': 'Votre email' } } ) }}
+            {{form_row(form.login, {'label':'Nom d\'utilisateur','attr': {'placeholder': 'Votre nom d\'ulisateur' } } ) }}
+            {{form_row(form.mot_de_passe, {'label':'Mot de passe','attr': {'placeholder': 'Votre mot de passe' } } ) }}
+            {{form_row(form.confirm_mdp, {'label':'Confirmation mot de passe','attr': {'placeholder': 'Votre mot de passe' } } ) }}
+
+
+           <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> S'inscire</button>
+            {{form_end(form) }}
+          
+       
+      </div>
+    </div>
+  </div>
+
+
+
+{% endblock %}

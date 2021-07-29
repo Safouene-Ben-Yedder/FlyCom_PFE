@@ -1,0 +1,79 @@
+{% extends 'baseAdmin.html.twig' %}
+{% form_theme formAvion 'bootstrap_4_layout.html.twig' %}
+ 
+         
+
+{% block stylesheets %}
+
+<style>
+a {
+  text-decoration: none;
+    color: black;
+
+}
+
+#myInput{
+ padding-right : 200px; 
+}
+</style>
+
+{% endblock %}
+
+{% block body %}
+         {% if editMode %}
+              <h3><i class="fa fa-angle-right"></i>Modifier l'avion</h3>
+         {% else %}
+              <h3><i class="fa fa-angle-right"></i>Créer un nouvel avion</h3>
+         {% endif %}   
+        
+        <div class="row">
+          <div class="col-md-12">
+            <div class="content-panel">
+               
+              <div class="adv-table">
+             
+                    
+                {{ form_start(formAvion) }} 
+                  {#  {{ form_errors(form) }} #}
+
+                    {# <div class="form-group">
+                       <label for="">Numéro de vol</label>
+                       {{ form_widget(formVol.num_vol) }} 
+                    <div>  #}
+
+                   {#} <div class="form-group">
+                      {{ form_label(form.content, "Contenu de l'annonce", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                      {{ form_errors(form.content) }}
+                      <div class="col-sm-10">
+                        {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.content) }}
+                      </div>
+                    </div> #}
+
+                    {{ form_row(formAvion.code_avion) }}
+                    {{ form_row(formAvion.nom_avion) }}
+                     {{ form_row(formAvion.categorie) }}
+                    
+                    <button type="submit" class="btn btn-round btn-success">
+                    {% if editMode %}
+                        Enregistrer
+                     {% else %}
+                        Ajouter l'avion
+                     {% endif %}   
+                    </button>
+
+                {{ form_end(formAvion) }}    
+
+
+
+
+
+
+              
+               </div>    
+            </div>
+          </div>
+        </div>
+          
+
+{% endblock %}

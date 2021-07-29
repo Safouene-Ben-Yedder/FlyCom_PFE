@@ -1,0 +1,67 @@
+DELIMITER //
+
+CREATE PROCEDURE GetAllTaches()
+BEGIN
+	SELECT *  FROM tache;
+END //
+
+DELIMITER ;
+
+
+CREATE EVENT verif_retard_taches
+ON SCHEDULE EVERY 30 SECOND
+DO
+CALL modif_retard_taches_vol_en_cours();
+
+DROP EVENT event_name;
+SHOW EVENTS FROM classicmodels;
+
+https://www.mysqltutorial.org/mysql-triggers/working-mysql-scheduled-event/
+
+
+DELIMITER $$
+CREATE PROCEDURE modif_retard_taches_vol_en_cours()
+BEGIN
+	DECLARE finished INTEGER DEFAULT 0;
+	DECLARE debutTache time;
+	DECLARE dureeMax time;
+	DECLARE tveId INTEGER DEFAULT 0;
+	DECLARE volId INTEGER DEFAULT 0;
+		
+
+	DEClARE cursor1 
+		CURSOR FOR 
+			SELECT tve.id, vol.id, TIME(tve.date_debut_tache), tache.duree_max
+			from (tve join vol on tve.vol_id=vol.id)
+			     join tache on tve.tache_id=tache.id
+			where vol.reatard IS NULL AND avancement=1 AND tve.date_fin_tache IS NULL ;
+
+	
+	DECLARE CONTINUE HANDLER 
+        FOR NOT FOUND SET finished = 1;
+
+	OPEN cursor1;
+
+	modif: LOOP
+		FETCH cursor1 INTO tveId, volId, debutTache, dureeMax;
+		IF finished = 1 THEN 
+			LEAVE modif;
+		END IF;
+		
+		IF TIMEDIFF(TIME(SYSDATE()),debutTache) > ADDTIME(dureeMax,'00:2:00') THEN 
+			set a=TIMEDIFF(TIME(SYSDATE()),debutTache);
+			UPDATE tve SET retard =TIMEDIFF(a,dureeMax) WHERE tve.id = tveId;
+		END IF;
+
+
+
+	END LOOP modif;
+	CLOSE cursor1;
+
+END$$
+DELIMITER ;
+
+
+
+
+

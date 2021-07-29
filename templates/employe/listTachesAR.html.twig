@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  
+     
+</head>
+<body>
+
+
+        <h3 align="center">Liste des tâches à réaliser</h3>
+        
+                  <table align="center" border="1" >  
+                  <thead>
+                      <tr>
+                      <td>Numéro de vol</td>
+                      <td>Aéroport de départ</td>
+                      <td>Aéroport d'arrivée</td>
+                      <td>date d'arrivée</td>
+                      <td>date de départ</td>
+                      <td>Tâche</td>
+                      </tr>
+                </thead>
+                  <tbody>
+
+                    {% for tve in tves %}
+                        <tr>
+        
+                            <td>{{tve.vol.num_vol}}</td>
+                            <td>{{tve.vol.aeroport_arrivee.nom_aeroport}}</td>
+                            <td>{{tve.vol.aeroport_depart.nom_aeroport}}</td>
+                            <td>{{tve.vol.date_arrivee | date('d/m/y à H:i')}}</td>
+                            <td>{{tve.vol.date_depart | date('d/m/y à H:i')}}</td>
+                            <td>{{tve.tache.description}}</td>
+                         
+                      
+                        </tr>
+                      {% endfor %}
+
+                 </tbody>
+                  </table>     
+
+
+
+  </body>
